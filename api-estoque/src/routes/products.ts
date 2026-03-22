@@ -182,14 +182,14 @@ router.patch('/:id/deactivate', asyncHandler(async (req: AuthRequest, res: Respo
   res.json({ message: 'Produto desativado.' })
 }))
 
-// ── DELETE /api/v1/products/:id ─────────────────────────────
+// ── DELETE /api/v1/products/:id (soft delete) ───────────────
 router.delete('/:id', asyncHandler(async (req: AuthRequest, res: Response) => {
   const pool = await getPool()
 
   const result = await pool.request()
     .input('id',         sql.UniqueIdentifier, req.params.id)
     .input('usuario_id', sql.UniqueIdentifier, req.userId)
-    .query('DELETE FROM PRODUTOS WHERE PROIDPRODUTO = @id AND PROIDUSUARIOCADASTRO = @usuario_id')
+    .query('UPDATE PRODUTOS SET PROATIVO = 0 WHERE PROIDPRODUTO = @id AND PROIDUSUARIOCADASTRO = @usuario_id')
 
   if (result.rowsAffected[0] === 0) throw new AppError(404, 'Produto nao encontrado.')
 

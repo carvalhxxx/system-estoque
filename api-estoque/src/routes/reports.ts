@@ -145,11 +145,11 @@ router.get('/movements', asyncHandler(async (req: AuthRequest, res: Response) =>
     where += ' AND t.TIMOPERACAO = @operacao'
   }
   if (req.query.data_inicio) {
-    request.input('data_inicio', sql.NVarChar, `${req.query.data_inicio}T00:00:00`)
+    request.input('data_inicio', sql.DateTime2, new Date(`${req.query.data_inicio}T00:00:00`))
     where += ' AND m.MOVDATACADASTRO >= @data_inicio'
   }
   if (req.query.data_fim) {
-    request.input('data_fim', sql.NVarChar, `${req.query.data_fim}T23:59:59`)
+    request.input('data_fim', sql.DateTime2, new Date(`${req.query.data_fim}T23:59:59`))
     where += ' AND m.MOVDATACADASTRO <= @data_fim'
   }
 

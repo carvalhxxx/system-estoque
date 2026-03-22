@@ -8,8 +8,8 @@ const config: sql.config = {
   port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : undefined,
   database: process.env.DB_DATABASE || 'SistemaEstoque',
   options: {
-    encrypt: false,                // local não precisa de encrypt
-    trustServerCertificate: true,  // aceita certificado local
+    encrypt: process.env.NODE_ENV === 'production',
+    trustServerCertificate: process.env.NODE_ENV !== 'production',
     enableArithAbort: true,
   },
   // Se DB_TRUSTED_CONNECTION=true, usa autenticação Windows

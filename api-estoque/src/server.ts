@@ -18,6 +18,15 @@ import reportsRoutes from './routes/reports'
 
 dotenv.config()
 
+// ── Validacao de variaveis de ambiente ─────────────────────
+const requiredEnvVars = ['JWT_SECRET'] as const
+for (const envVar of requiredEnvVars) {
+  if (!process.env[envVar]) {
+    console.error(`FATAL: variavel de ambiente ${envVar} nao definida.`)
+    process.exit(1)
+  }
+}
+
 const app = express()
 const PORT = process.env.PORT || 3001
 

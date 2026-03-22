@@ -64,11 +64,11 @@ router.get('/', asyncHandler(async (req: AuthRequest, res: Response) => {
     where += ' AND m.MOVIDTIPO = @tipo_id'
   }
   if (req.query.data_inicio) {
-    request.input('data_inicio', sql.NVarChar, `${req.query.data_inicio}T00:00:00`)
+    request.input('data_inicio', sql.DateTime2, new Date(`${req.query.data_inicio}T00:00:00`))
     where += ' AND m.MOVDATACADASTRO >= @data_inicio'
   }
   if (req.query.data_fim) {
-    request.input('data_fim', sql.NVarChar, `${req.query.data_fim}T23:59:59`)
+    request.input('data_fim', sql.DateTime2, new Date(`${req.query.data_fim}T23:59:59`))
     where += ' AND m.MOVDATACADASTRO <= @data_fim'
   }
 
@@ -126,35 +126,47 @@ router.get('/:id', asyncHandler(async (req: AuthRequest, res: Response) => {
 
 // ── POST /api/v1/movements ──────────────────────────────────
 router.post('/', asyncHandler(async (req: AuthRequest, res: Response) => {
-  const { produto_id, tipo_id, quantidade, justificativa, tipo_referencia, id_referencia, observacao } = req.body
+  const { produto_id, tipo_id, justificativa, tipo_referencia, id_referencia, observacao } = req.body
 
-  if (!produto_id || !tipo_id || !quantidade) throw new AppError(400, 'produto_id, tipo_id e quantidade sao obrigatorios.')
+  if (!produto_id || !tipo_id || !req.body.quantidade) throw new AppError(400, 'produto_id, tipo_id e quantidade sao obrigatorios.')
+
+  const quantidade = Number(req.body.quantidade)
+  if (!Number.isFinite(quantidade) || quantidade <= 0) throw new AppError(422, 'quantidade deve ser um numero positivo.')
 
   const pool = await getPool()
+  const transaction = pool.transaction()
+  await transaction.begin()
 
-  const insertResult = await pool.request()
-    .input('usuario_id',     sql.UniqueIdentifier, req.userId)
-    .input('produto_id',     sql.UniqueIdentifier, produto_id)
-    .input('tipo_id',        sql.UniqueIdentifier, tipo_id)
-    .input('quantidade',     sql.Decimal(10, 3),   quantidade)
-    .input('justificativa',  sql.NVarChar,         justificativa || null)
-    .input('tipo_referencia',sql.NVarChar,         tipo_referencia || null)
-    .input('id_referencia',  sql.UniqueIdentifier, id_referencia || null)
-    .input('observacao',     sql.NVarChar,         observacao || null)
-    .query(`
-      DECLARE @novo_id UNIQUEIDENTIFIER = NEWID();
-      INSERT INTO MOVIMENTACOES (MOVIDMOVIMENTACAO, MOVIDUSUARIOCADASTRO, MOVIDPRODUTO, MOVIDTIPO, MOVQUANTIDADE, MOVJUSTIFICATIVA, MOVTIPOREFERENCIA, MOVIDREFERENCIA, MOVOBSERVACAO)
-      VALUES (@novo_id, @usuario_id, @produto_id, @tipo_id, @quantidade, @justificativa, @tipo_referencia, @id_referencia, @observacao);
-      SELECT @novo_id AS MOVIDMOVIMENTACAO;
-    `)
+  try {
+    const insertResult = await transaction.request()
+      .input('usuario_id',     sql.UniqueIdentifier, req.userId)
+      .input('produto_id',     sql.UniqueIdentifier, produto_id)
+      .input('tipo_id',        sql.UniqueIdentifier, tipo_id)
+      .input('quantidade',     sql.Decimal(10, 3),   quantidade)
+      .input('justificativa',  sql.NVarChar,         justificativa || null)
+      .input('tipo_referencia',sql.NVarChar,         tipo_referencia || null)
+      .input('id_referencia',  sql.UniqueIdentifier, id_referencia || null)
+      .input('observacao',     sql.NVarChar,         observacao || null)
+      .query(`
+        DECLARE @novo_id UNIQUEIDENTIFIER = NEWID();
+        INSERT INTO MOVIMENTACOES (MOVIDMOVIMENTACAO, MOVIDUSUARIOCADASTRO, MOVIDPRODUTO, MOVIDTIPO, MOVQUANTIDADE, MOVJUSTIFICATIVA, MOVTIPOREFERENCIA, MOVIDREFERENCIA, MOVOBSERVACAO)
+        VALUES (@novo_id, @usuario_id, @produto_id, @tipo_id, @quantidade, @justificativa, @tipo_referencia, @id_referencia, @observacao);
+        SELECT @novo_id AS MOVIDMOVIMENTACAO;
+      `)
 
-  const createdId = insertResult.recordset[0].MOVIDMOVIMENTACAO
+    const createdId = insertResult.recordset[0].MOVIDMOVIMENTACAO
 
-  const result = await pool.request()
-    .input('id', sql.UniqueIdentifier, createdId)
-    .query(`${SELECT_MOVIMENTACAO} WHERE m.MOVIDMOVIMENTACAO = @id`)
+    const result = await transaction.request()
+      .input('id', sql.UniqueIdentifier, createdId)
+      .query(`${SELECT_MOVIMENTACAO} WHERE m.MOVIDMOVIMENTACAO = @id`)
 
-  res.status(201).json(formatMovimentacao(result.recordset[0]))
+    await transaction.commit()
+
+    res.status(201).json(formatMovimentacao(result.recordset[0]))
+  } catch (err) {
+    await transaction.rollback()
+    throw err
+  }
 }))
 
 // ── POST /api/v1/movements/:id/cancel ───────────────────────

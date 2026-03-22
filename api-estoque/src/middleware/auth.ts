@@ -6,7 +6,13 @@ export interface AuthRequest extends Request {
   userId?: string
 }
 
-const JWT_SECRET = process.env.JWT_SECRET || 'troque-por-uma-chave-secreta'
+function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET
+  if (!secret) throw new Error('JWT_SECRET environment variable is required. Server cannot start without it.')
+  return secret
+}
+
+const JWT_SECRET = getJwtSecret()
 
 /**
  * Middleware de autenticação JWT.
