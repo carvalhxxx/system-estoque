@@ -49,39 +49,66 @@ function openPrintWindow(title: string, html: string, landscape = true) {
   <title>${title}</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Segoe UI', Arial, sans-serif; color: #1a1a1a; padding: 24px; font-size: 11px; }
-    h1 { font-size: 18px; margin-bottom: 4px; }
-    .subtitle { font-size: 11px; color: #666; margin-bottom: 16px; }
-    table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
-    th, td { padding: 6px 8px; text-align: left; border-bottom: 1px solid #e0e0e0; }
-    th { background: #f5f5f5; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: #555; font-weight: 600; }
-    td { font-size: 11px; }
+    body { font-family: Helvetica, 'Segoe UI', Arial, sans-serif; color: #1a1a1a; padding: 24px; font-size: 10px; line-height: 1.4; }
+    h1 { font-size: 16px; margin-bottom: 2px; font-weight: 700; letter-spacing: -0.3px; }
+    .subtitle { font-size: 10px; color: #666; margin-bottom: 14px; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+    th, td { padding: 4px 6px; text-align: left; border-bottom: 1px solid #ddd; }
+    th { font-size: 8px; text-transform: uppercase; letter-spacing: 0.6px; color: #555; font-weight: 700; border-bottom: 2px solid #333; padding-bottom: 5px; }
+    td { font-size: 9px; }
     .text-right { text-align: right; }
     .text-center { text-align: center; }
     .text-green { color: #15803d; }
-    .text-red { color: #dc2626; }
-    .text-muted { color: #888; font-size: 10px; }
-    .totals-row td { font-weight: 700; border-top: 2px solid #333; border-bottom: none; background: #f9f9f9; }
-    .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-bottom: 20px; }
-    .summary-card { border: 1px solid #ddd; border-radius: 4px; padding: 10px; text-align: center; }
-    .summary-card .value { font-size: 16px; font-weight: 700; }
-    .summary-card .label { font-size: 9px; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
-    .cat-header { background: #e8e8e8; font-weight: 600; font-size: 11px; }
-    .cat-header td { padding: 8px; }
-    .badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 10px; font-weight: 600; }
+    .text-red { color: #b91c1c; }
+    .text-muted { color: #888; font-size: 9px; }
+    .totals-row td { font-weight: 700; border-top: 2px solid #333; border-bottom: none; background: #f5f5f5; font-size: 9px; }
+    .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 16px; }
+    .summary-card { border: 1px solid #ddd; border-radius: 3px; padding: 8px; text-align: center; }
+    .summary-card .value { font-size: 14px; font-weight: 700; }
+    .summary-card .label { font-size: 8px; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+    .cat-header { background: #e8e8e8; font-weight: 600; font-size: 10px; }
+    .cat-header td { padding: 6px; }
+    .badge { display: inline-block; padding: 1px 6px; border-radius: 2px; font-size: 8px; font-weight: 600; }
     .badge-green { background: #dcfce7; color: #15803d; }
-    .badge-red { background: #fee2e2; color: #dc2626; }
-    .footer { margin-top: 20px; padding-top: 10px; border-top: 1px solid #ddd; font-size: 9px; color: #999; text-align: center; }
+    .badge-red { background: #fee2e2; color: #b91c1c; }
+
+    /* Movimentacoes - layout denso A4 */
+    .mov-header { margin-bottom: 10px; border-bottom: 2px solid #1a1a1a; padding-bottom: 8px; }
+    .mov-header h1 { font-size: 14px; }
+    .mov-subtitle { font-size: 9px; color: #555; margin-top: 2px; }
+    .mov-summary { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; padding: 6px 0; border-bottom: 1px solid #ddd; }
+    .mov-summary-item { display: flex; align-items: center; gap: 4px; }
+    .mov-summary-label { font-size: 8px; text-transform: uppercase; letter-spacing: 0.5px; color: #666; font-weight: 600; }
+    .mov-summary-value { font-size: 10px; font-weight: 700; }
+    .mov-summary-sep { color: #ccc; font-size: 10px; }
+    .mov-table th, .mov-table td { padding: 3px 5px; }
+    .mov-table td { font-size: 8.5px; border-bottom: 1px solid #eee; }
+    .mov-table th { font-size: 7.5px; padding-bottom: 4px; }
+    .mov-table tbody tr:hover { background: #fafafa; }
+    .col-seq { width: 24px; text-align: center; color: #999; font-size: 7.5px; }
+    .col-date { width: 95px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .col-sku { width: 70px; font-family: 'Courier New', monospace; font-size: 8px; color: #555; }
+    .col-product { min-width: 100px; }
+    .col-type { width: 22px; text-align: center; }
+    .col-qty { width: 55px; text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .col-reason { color: #444; font-size: 8px; }
+    .arrow-up { color: #15803d; font-size: 7px; }
+    .arrow-down { color: #b91c1c; font-size: 7px; }
+    .mov-table .totals-row td { font-size: 8.5px; padding: 5px; }
+
+    .footer { margin-top: 16px; padding-top: 8px; border-top: 1px solid #ddd; font-size: 8px; color: #999; display: flex; justify-content: space-between; }
     @media print {
       body { padding: 0; }
-      @page { margin: 15mm; size: A4 ${landscape ? 'landscape' : 'portrait'}; }
+      @page { margin: 12mm 10mm; size: A4 ${landscape ? 'landscape' : 'portrait'}; }
+      .mov-table tbody tr:hover { background: none; }
     }
   </style>
 </head>
 <body>
   ${html}
   <div class="footer">
-    Gerado em ${today()} - Sistema de Estoque
+    <span>Gerado em ${today()} - Sistema de Estoque</span>
+    <span>Pagina 1</span>
   </div>
   <script>window.onload = function() { window.print(); }</script>
 </body>
@@ -184,51 +211,74 @@ function buildClientReport(produtos: ProdutoRelatorioCliente[], nomeEmpresa: str
 }
 
 function buildMovementsReport(movimentacoes: MovimentacaoRelatorio[], totais: TotaisMovimentacao, filtroTexto: string) {
+  const periodo = filtroTexto || 'Todas as movimentacoes'
+
   const summaryHtml = `
-    <div class="summary-grid">
-      <div class="summary-card"><div class="value">${totais.total}</div><div class="label">Total Movimentacoes</div></div>
-      <div class="summary-card"><div class="value text-green">${totais.total_entradas}</div><div class="label">Entradas</div></div>
-      <div class="summary-card"><div class="value text-red">${totais.total_saidas}</div><div class="label">Saidas</div></div>
-      <div class="summary-card"><div class="value text-green">${fmtQty(totais.qtd_entradas)}</div><div class="label">Qtd. Entrada</div></div>
-      <div class="summary-card"><div class="value text-red">${fmtQty(totais.qtd_saidas)}</div><div class="label">Qtd. Saida</div></div>
+    <div class="mov-summary">
+      <div class="mov-summary-item">
+        <span class="mov-summary-label">Total</span>
+        <span class="mov-summary-value">${totais.total}</span>
+      </div>
+      <span class="mov-summary-sep">|</span>
+      <div class="mov-summary-item">
+        <span class="mov-summary-label">Entradas</span>
+        <span class="mov-summary-value text-green">${totais.total_entradas} (${fmtQty(totais.qtd_entradas)} un.)</span>
+      </div>
+      <span class="mov-summary-sep">|</span>
+      <div class="mov-summary-item">
+        <span class="mov-summary-label">Saidas</span>
+        <span class="mov-summary-value text-red">${totais.total_saidas} (${fmtQty(totais.qtd_saidas)} un.)</span>
+      </div>
     </div>
   `
 
   let tableRows = ''
-  for (const m of movimentacoes) {
-    const opBadge = m.operacao === '+'
-      ? '<span class="badge badge-green">+ Entrada</span>'
-      : '<span class="badge badge-red">- Saida</span>'
+  movimentacoes.forEach((m, i) => {
+    const isEntrada = m.operacao === '+'
+    const arrow = isEntrada
+      ? '<span class="arrow-up">&#9650;</span>'
+      : '<span class="arrow-down">&#9660;</span>'
+    const qtyClass = isEntrada ? 'text-green' : 'text-red'
+    const qtySign = isEntrada ? '+' : '-'
     tableRows += `
       <tr>
-        <td>${fmtDateTime(m.data)}</td>
-        <td>${m.produto}</td>
-        <td>${m.sku || '—'}</td>
-        <td>${m.tipo_descricao}</td>
-        <td class="text-center">${opBadge}</td>
-        <td class="text-right">${fmtQty(m.quantidade)}</td>
-        <td>${m.justificativa || '—'}</td>
-        <td>${m.observacao || '—'}</td>
+        <td class="col-seq">${i + 1}</td>
+        <td class="col-date">${fmtDateTime(m.data)}</td>
+        <td class="col-sku">${m.sku || '—'}</td>
+        <td class="col-product">${m.produto}</td>
+        <td class="col-type">${arrow}</td>
+        <td class="col-qty ${qtyClass}">${qtySign}${fmtQty(m.quantidade)}</td>
+        <td class="col-reason">${m.justificativa || m.tipo_descricao}</td>
       </tr>`
-  }
+  })
 
   return `
-    <h1>Relatorio de Movimentacoes</h1>
-    <div class="subtitle">${filtroTexto || 'Todas as movimentacoes'} - Gerado em ${today()}</div>
+    <div class="mov-header">
+      <h1>Relatorio Detalhado de Movimentacoes</h1>
+      <div class="mov-subtitle">${periodo}</div>
+    </div>
     ${summaryHtml}
-    <table>
+    <table class="mov-table">
       <thead><tr>
-        <th>Data</th><th>Produto</th><th>SKU</th><th>Tipo</th><th class="text-center">Operacao</th>
-        <th class="text-right">Quantidade</th><th>Justificativa</th><th>Observacao</th>
+        <th class="col-seq">#</th>
+        <th class="col-date">Data/Hora</th>
+        <th class="col-sku">SKU</th>
+        <th class="col-product">Produto</th>
+        <th class="col-type">Tipo</th>
+        <th class="col-qty">Qtd.</th>
+        <th class="col-reason">Motivo</th>
       </tr></thead>
       <tbody>
         ${tableRows}
-        <tr class="totals-row">
-          <td colspan="5">TOTAL</td>
-          <td class="text-right">${fmtQty(totais.qtd_entradas + totais.qtd_saidas)}</td>
-          <td colspan="2">${totais.total} movimentacao${totais.total !== 1 ? 'es' : ''}</td>
-        </tr>
       </tbody>
+      <tfoot>
+        <tr class="totals-row">
+          <td colspan="4">TOTAL: ${totais.total} movimentacao${totais.total !== 1 ? 'es' : ''}</td>
+          <td class="col-type"></td>
+          <td class="col-qty">${fmtQty(totais.qtd_entradas + totais.qtd_saidas)}</td>
+          <td>Entradas: ${fmtQty(totais.qtd_entradas)} | Saidas: ${fmtQty(totais.qtd_saidas)}</td>
+        </tr>
+      </tfoot>
     </table>`
 }
 
@@ -390,34 +440,34 @@ export default function ReportsPage() {
     if (!relatorioMov) { refetchMov(); toast.error('Aguarde o carregamento dos dados.'); return }
     const { movimentacoes: movs, totais: t } = relatorioMov
     exportPdf({
-      title: 'Relatorio de Movimentacoes',
+      title: 'Relatorio Detalhado de Movimentacoes',
       subtitle: getMovFilterText() || 'Todas as movimentacoes',
       landscape: true,
       summaryCards: [
         { label: 'Total', value: String(t.total) },
-        { label: 'Entradas', value: String(t.total_entradas) },
-        { label: 'Saidas', value: String(t.total_saidas) },
-        { label: 'Qtd. Entrada', value: fmtQty(t.qtd_entradas) },
-        { label: 'Qtd. Saida', value: fmtQty(t.qtd_saidas) },
+        { label: 'Entradas', value: `${t.total_entradas} (${fmtQty(t.qtd_entradas)} un.)` },
+        { label: 'Saidas', value: `${t.total_saidas} (${fmtQty(t.qtd_saidas)} un.)` },
       ],
       columns: [
-        { header: 'Data', dataKey: 'data_fmt' },
-        { header: 'Produto', dataKey: 'produto' },
+        { header: '#', dataKey: 'seq', align: 'center' },
+        { header: 'Data/Hora', dataKey: 'data_fmt' },
         { header: 'SKU', dataKey: 'sku' },
-        { header: 'Tipo', dataKey: 'tipo_descricao' },
-        { header: 'Operacao', dataKey: 'operacao_fmt', align: 'center' },
-        { header: 'Quantidade', dataKey: 'quantidade_fmt', align: 'right' },
-        { header: 'Justificativa', dataKey: 'justificativa' },
-        { header: 'Observacao', dataKey: 'observacao' },
+        { header: 'Produto', dataKey: 'produto' },
+        { header: 'Tipo', dataKey: 'operacao_fmt', align: 'center' },
+        { header: 'Qtd.', dataKey: 'quantidade_fmt', align: 'right' },
+        { header: 'Motivo', dataKey: 'motivo' },
       ],
-      rows: movs.map(m => ({
+      rows: movs.map((m, i) => ({
+        seq: String(i + 1),
         data_fmt: fmtDateTime(m.data), produto: m.produto, sku: m.sku || '—',
-        tipo_descricao: m.tipo_descricao, operacao_fmt: m.operacao === '+' ? '+ Entrada' : '- Saida',
-        quantidade_fmt: fmtQty(m.quantidade), justificativa: m.justificativa || '—', observacao: m.observacao || '—',
+        operacao_fmt: m.operacao === '+' ? '▲' : '▼',
+        quantidade_fmt: `${m.operacao === '+' ? '+' : '-'}${fmtQty(m.quantidade)}`,
+        motivo: m.justificativa || m.tipo_descricao,
       })),
       totalsRow: {
-        data_fmt: '', produto: '', sku: '', tipo_descricao: '', operacao_fmt: 'TOTAL',
-        quantidade_fmt: fmtQty(t.qtd_entradas + t.qtd_saidas), justificativa: `${t.total} movimentacoes`, observacao: '',
+        seq: '', data_fmt: '', sku: '', produto: 'TOTAL', operacao_fmt: '',
+        quantidade_fmt: fmtQty(t.qtd_entradas + t.qtd_saidas),
+        motivo: `Entradas: ${fmtQty(t.qtd_entradas)} | Saidas: ${fmtQty(t.qtd_saidas)}`,
       },
     })
   }
@@ -484,23 +534,22 @@ export default function ReportsPage() {
       filename: 'Relatorio_Movimentacoes',
       sheetName: 'Movimentacoes',
       columns: [
-        { header: 'Data', key: 'data_fmt', width: 18 },
-        { header: 'Produto', key: 'produto', width: 28 },
+        { header: '#', key: 'seq', width: 6 },
+        { header: 'Data/Hora', key: 'data_fmt', width: 18 },
         { header: 'SKU', key: 'sku', width: 14 },
-        { header: 'Tipo', key: 'tipo_descricao', width: 18 },
-        { header: 'Operacao', key: 'operacao_fmt', width: 12 },
-        { header: 'Quantidade', key: 'quantidade', width: 12 },
-        { header: 'Justificativa', key: 'justificativa', width: 25 },
-        { header: 'Observacao', key: 'observacao', width: 25 },
+        { header: 'Produto', key: 'produto', width: 28 },
+        { header: 'Tipo', key: 'operacao_fmt', width: 10 },
+        { header: 'Qtd.', key: 'quantidade', width: 12 },
+        { header: 'Motivo', key: 'motivo', width: 30 },
       ],
-      rows: movs.map(m => ({
-        data_fmt: fmtDateTime(m.data), produto: m.produto, sku: m.sku,
-        tipo_descricao: m.tipo_descricao, operacao_fmt: m.operacao === '+' ? 'Entrada' : 'Saida',
-        quantidade: m.quantidade, justificativa: m.justificativa, observacao: m.observacao,
+      rows: movs.map((m, i) => ({
+        seq: i + 1, data_fmt: fmtDateTime(m.data), sku: m.sku, produto: m.produto,
+        operacao_fmt: m.operacao === '+' ? 'Entrada' : 'Saida',
+        quantidade: m.quantidade, motivo: m.justificativa || m.tipo_descricao,
       })),
       totalsRow: {
-        data_fmt: '', produto: '', sku: '', tipo_descricao: '', operacao_fmt: 'TOTAL',
-        quantidade: t.qtd_entradas + t.qtd_saidas, justificativa: `${t.total} movimentacoes`, observacao: '',
+        seq: '', data_fmt: '', sku: '', produto: 'TOTAL', operacao_fmt: '',
+        quantidade: t.qtd_entradas + t.qtd_saidas, motivo: `Entradas: ${fmtQty(t.qtd_entradas)} | Saidas: ${fmtQty(t.qtd_saidas)}`,
       },
     })
   }
