@@ -24,5 +24,8 @@ Thumbs.db
 *.log
 npm-debug.log*
 
+# Scripts SQL (podem conter credenciais)
+scripts/
+
 # Claude
 .claude/
