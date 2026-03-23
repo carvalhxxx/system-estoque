@@ -3,6 +3,7 @@ import { getPool, sql } from '../config/database'
 import { authMiddleware, AuthRequest } from '../middleware/auth'
 import { asyncHandler } from '../middleware/asyncHandler'
 import { AppError } from '../middleware/errorHandler'
+import type { ProdutoRow } from '../types/recordsets'
 
 const router = Router()
 router.use(authMiddleware)
@@ -20,7 +21,7 @@ const SELECT_PRODUTO = `
   LEFT JOIN UNIDADESMEDIDA u ON u.UNIIDUNIDADE = p.PROIDUNIDADE
 `
 
-function formatProduto(row: any) {
+function formatProduto(row: ProdutoRow) {
   const { categoria_id_ref, categoria_nome, unidade_id_ref, unidade_sigla, unidade_descricao, ...produto } = row
   return {
     ...produto,

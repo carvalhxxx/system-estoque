@@ -12,8 +12,6 @@ function getJwtSecret(): string {
   return secret
 }
 
-const JWT_SECRET = getJwtSecret()
-
 /**
  * Middleware de autenticação JWT.
  * Extrai o token do header Authorization: Bearer <token>
@@ -30,7 +28,7 @@ export function authMiddleware(req: AuthRequest, res: Response, next: NextFuncti
   const token = authHeader.split(' ')[1]
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as { id: string }
+    const decoded = jwt.verify(token, getJwtSecret()) as { id: string }
     req.userId = decoded.id
     next()
   } catch {
@@ -42,7 +40,7 @@ export function authMiddleware(req: AuthRequest, res: Response, next: NextFuncti
  * Gera um token JWT para o usuário.
  */
 export function generateToken(userId: string): string {
-  return jwt.sign({ id: userId }, JWT_SECRET, {
+  return jwt.sign({ id: userId }, getJwtSecret(), {
     expiresIn: (process.env.JWT_EXPIRES_IN || '7d') as string,
   } as jwt.SignOptions)
 }

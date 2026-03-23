@@ -3,6 +3,7 @@ import { getPool, sql } from '../config/database'
 import { authMiddleware, AuthRequest } from '../middleware/auth'
 import { asyncHandler } from '../middleware/asyncHandler'
 import { AppError } from '../middleware/errorHandler'
+import type { MovimentacaoRow, MovimentacaoByProductRow } from '../types/recordsets'
 
 const router = Router()
 router.use(authMiddleware)
@@ -23,7 +24,7 @@ const SELECT_MOVIMENTACAO = `
   INNER JOIN TIPOSMOVIMENTACAO t ON t.TIMIDTIPO    = m.MOVIDTIPO
 `
 
-function formatMovimentacao(row: any) {
+function formatMovimentacao(row: MovimentacaoRow) {
   const {
     produto_id_ref, produto_nome, produto_sku, produto_unidade,
     tipo_id_ref, tipo_codigo, tipo_descricao, tipo_operacao,
@@ -100,7 +101,7 @@ router.get('/by-product/:produtoId', asyncHandler(async (req: AuthRequest, res: 
       ORDER BY m.MOVDATACADASTRO DESC
     `)
 
-  const data = result.recordset.map((row: any) => {
+  const data = result.recordset.map((row: MovimentacaoByProductRow) => {
     const { tipo_id_ref, tipo_codigo, tipo_descricao, tipo_operacao, ...rest } = row
     return {
       ...rest,
