@@ -479,18 +479,27 @@ export default function ReportsPage() {
     exportExcel({
       filename: 'Relatorio_Interno_Estoque',
       sheetName: 'Estoque',
+      title: 'Relatório Interno de Estoque',
+      subtitle: `${prods.length} produtos | Gerado em ${today()}`,
+      summaryCards: [
+        { label: 'Total de Itens', value: fmtQty(t.total_itens) },
+        { label: 'Total de Peças', value: fmtQty(t.total_pecas) },
+        { label: 'Valor em Custo', value: fmtCurrency(t.total_custo) },
+        { label: 'Valor em Venda', value: fmtCurrency(t.total_venda) },
+        { label: 'Lucro Estimado', value: fmtCurrency(t.lucro_total) },
+      ],
       columns: [
         { header: 'SKU', key: 'sku', width: 14 },
         { header: 'Produto', key: 'nome', width: 30 },
         { header: 'Categoria', key: 'categoria', width: 18 },
         { header: 'Unidade', key: 'unidade', width: 10 },
         { header: 'Estoque Atual', key: 'estoque_atual', width: 14 },
-        { header: 'Estoque Minimo', key: 'estoque_minimo', width: 14 },
-        { header: 'Preco Custo', key: 'preco_custo', width: 14 },
-        { header: 'Preco Venda', key: 'preco_venda', width: 14 },
-        { header: 'Total Custo', key: 'valor_total_custo', width: 14 },
-        { header: 'Total Venda', key: 'valor_total_venda', width: 14 },
-        { header: 'Lucro', key: 'lucro_total', width: 14 },
+        { header: 'Estoque Mínimo', key: 'estoque_minimo', width: 14 },
+        { header: 'Preço Custo', key: 'preco_custo', width: 14, currency: true },
+        { header: 'Preço Venda', key: 'preco_venda', width: 14, currency: true },
+        { header: 'Total Custo', key: 'valor_total_custo', width: 14, currency: true },
+        { header: 'Total Venda', key: 'valor_total_venda', width: 14, currency: true },
+        { header: 'Lucro', key: 'lucro_total', width: 14, currency: true },
       ],
       rows: prods.map(p => ({
         sku: p.sku, nome: p.nome, categoria: p.categoria, unidade: p.unidade,
@@ -510,17 +519,20 @@ export default function ReportsPage() {
 
   function handleExcelClient() {
     if (!relatorioCliente) { refetchCliente(); toast.error('Aguarde o carregamento dos dados.'); return }
+    const prods = relatorioCliente.produtos
     exportExcel({
       filename: 'Catalogo_Produtos',
       sheetName: 'Catálogo',
+      title: 'Catálogo de Produtos',
+      subtitle: `${prods.length} produtos disponíveis | Gerado em ${today()}`,
       columns: [
-        { header: 'Codigo', key: 'sku', width: 14 },
+        { header: 'Código', key: 'sku', width: 14 },
         { header: 'Produto', key: 'nome', width: 30 },
-        { header: 'Descricao', key: 'descricao', width: 35 },
+        { header: 'Descrição', key: 'descricao', width: 35 },
         { header: 'Unidade', key: 'unidade', width: 10 },
-        { header: 'Valor', key: 'preco_venda', width: 14 },
+        { header: 'Valor', key: 'preco_venda', width: 14, currency: true },
       ],
-      rows: relatorioCliente.produtos.map(p => ({
+      rows: prods.map(p => ({
         sku: p.sku, nome: p.nome, descricao: p.descricao, unidade: p.unidade,
         preco_venda: p.preco_venda,
       })),
@@ -532,7 +544,14 @@ export default function ReportsPage() {
     const { movimentacoes: movs, totais: t } = relatorioMov
     exportExcel({
       filename: 'Relatorio_Movimentacoes',
-      sheetName: 'Movimentacoes',
+      sheetName: 'Movimentações',
+      title: 'Relatório de Movimentações',
+      subtitle: `${movs.length} registros | Gerado em ${today()}`,
+      summaryCards: [
+        { label: 'Total Movimentações', value: String(movs.length) },
+        { label: 'Entradas', value: fmtQty(t.qtd_entradas) },
+        { label: 'Saídas', value: fmtQty(t.qtd_saidas) },
+      ],
       columns: [
         { header: '#', key: 'seq', width: 6 },
         { header: 'Data/Hora', key: 'data_fmt', width: 18 },
@@ -549,7 +568,7 @@ export default function ReportsPage() {
       })),
       totalsRow: {
         seq: '', data_fmt: '', sku: '', produto: 'TOTAL', operacao_fmt: '',
-        quantidade: t.qtd_entradas + t.qtd_saidas, motivo: `Entradas: ${fmtQty(t.qtd_entradas)} | Saidas: ${fmtQty(t.qtd_saidas)}`,
+        quantidade: t.qtd_entradas + t.qtd_saidas, motivo: `Entradas: ${fmtQty(t.qtd_entradas)} | Saídas: ${fmtQty(t.qtd_saidas)}`,
       },
     })
   }
