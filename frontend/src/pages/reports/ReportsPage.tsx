@@ -155,7 +155,7 @@ function buildInternalReport(produtos: ProdutoRelatorioInterno[], totais: Totais
   }
 
   return `
-    <h1>Relatorio Interno de Estoque</h1>
+    <h1>Relatório Interno de Estoque</h1>
     <div class="subtitle">Data: ${today()}</div>
     ${summaryHtml}
     <table>
@@ -201,7 +201,7 @@ function buildClientReport(produtos: ProdutoRelatorioCliente[], nomeEmpresa: str
   }
 
   return `
-    <h1>${nomeEmpresa || 'Catalogo de Produtos'}</h1>
+    <h1>${nomeEmpresa || 'Catálogo de Produtos'}</h1>
     <div class="subtitle">Lista de Produtos - ${today()}</div>
     <table>
       <thead><tr><th>Codigo</th><th>Produto</th><th>Descricao</th><th class="text-center">Unidade</th><th class="text-right">Valor</th></tr></thead>
@@ -211,7 +211,7 @@ function buildClientReport(produtos: ProdutoRelatorioCliente[], nomeEmpresa: str
 }
 
 function buildMovementsReport(movimentacoes: MovimentacaoRelatorio[], totais: TotaisMovimentacao, filtroTexto: string) {
-  const periodo = filtroTexto || 'Todas as movimentacoes'
+  const periodo = filtroTexto || 'Todas as movimentações'
 
   const summaryHtml = `
     <div class="mov-summary">
@@ -226,7 +226,7 @@ function buildMovementsReport(movimentacoes: MovimentacaoRelatorio[], totais: To
       </div>
       <span class="mov-summary-sep">|</span>
       <div class="mov-summary-item">
-        <span class="mov-summary-label">Saidas</span>
+        <span class="mov-summary-label">Saídas</span>
         <span class="mov-summary-value text-red">${totais.total_saidas} (${fmtQty(totais.qtd_saidas)} un.)</span>
       </div>
     </div>
@@ -254,7 +254,7 @@ function buildMovementsReport(movimentacoes: MovimentacaoRelatorio[], totais: To
 
   return `
     <div class="mov-header">
-      <h1>Relatorio Detalhado de Movimentacoes</h1>
+      <h1>Relatório Detalhado de Movimentações</h1>
       <div class="mov-subtitle">${periodo}</div>
     </div>
     ${summaryHtml}
@@ -273,10 +273,10 @@ function buildMovementsReport(movimentacoes: MovimentacaoRelatorio[], totais: To
       </tbody>
       <tfoot>
         <tr class="totals-row">
-          <td colspan="4">TOTAL: ${totais.total} movimentacao${totais.total !== 1 ? 'es' : ''}</td>
+          <td colspan="4">TOTAL: ${totais.total} movimentaç${totais.total !== 1 ? 'ões' : 'ão'}</td>
           <td class="col-type"></td>
           <td class="col-qty">${fmtQty(totais.qtd_entradas + totais.qtd_saidas)}</td>
-          <td>Entradas: ${fmtQty(totais.qtd_entradas)} | Saidas: ${fmtQty(totais.qtd_saidas)}</td>
+          <td>Entradas: ${fmtQty(totais.qtd_entradas)} | Saídas: ${fmtQty(totais.qtd_saidas)}</td>
         </tr>
       </tfoot>
     </table>`
@@ -354,22 +354,22 @@ export default function ReportsPage() {
     else if (movDataFim) parts.push(`Ate ${fmtDate(movDataFim + 'T00:00:00')}`)
     if (movProdutoId) { const p = produtos.find(x => x.PROIDPRODUTO === movProdutoId); if (p) parts.push(`Produto: ${p.PRONOME}`) }
     if (movTipoId) { const t = tipos.find(x => x.TIMIDTIPO === movTipoId); if (t) parts.push(`Tipo: ${t.TIMDESCRICAO}`) }
-    if (movOperacao) parts.push(`Operacao: ${movOperacao === '+' ? 'Entrada' : 'Saida'}`)
+    if (movOperacao) parts.push(`Operação: ${movOperacao === '+' ? 'Entrada' : 'Saída'}`)
     return parts.join(' | ')
   }
 
   // ── Print ───────────────────────────────────────────────
   function handlePrintInternal() {
     if (!relatorioInterno) { refetchInterno(); toast.error('Aguarde o carregamento dos dados.'); return }
-    openPrintWindow('Relatorio Interno de Estoque', buildInternalReport(relatorioInterno.produtos, relatorioInterno.totais))
+    openPrintWindow('Relatório Interno de Estoque', buildInternalReport(relatorioInterno.produtos, relatorioInterno.totais))
   }
   function handlePrintClient() {
     if (!relatorioCliente) { refetchCliente(); toast.error('Aguarde o carregamento dos dados.'); return }
-    openPrintWindow('Catalogo de Produtos', buildClientReport(relatorioCliente.produtos, nomeEmpresa), false)
+    openPrintWindow('Catálogo de Produtos', buildClientReport(relatorioCliente.produtos, nomeEmpresa), false)
   }
   function handlePrintMovements() {
     if (!relatorioMov) { refetchMov(); toast.error('Aguarde o carregamento dos dados.'); return }
-    openPrintWindow('Relatorio de Movimentacoes', buildMovementsReport(relatorioMov.movimentacoes, relatorioMov.totais, getMovFilterText()))
+    openPrintWindow('Relatório de Movimentações', buildMovementsReport(relatorioMov.movimentacoes, relatorioMov.totais, getMovFilterText()))
   }
 
   // ── PDF ─────────────────────────────────────────────────
@@ -377,7 +377,7 @@ export default function ReportsPage() {
     if (!relatorioInterno) { refetchInterno(); toast.error('Aguarde o carregamento dos dados.'); return }
     const { produtos: prods, totais: t } = relatorioInterno
     exportPdf({
-      title: 'Relatorio Interno de Estoque',
+      title: 'Relatório Interno de Estoque',
       subtitle: `Data: ${today()}`,
       landscape: true,
       summaryCards: [
@@ -419,7 +419,7 @@ export default function ReportsPage() {
   function handlePdfClient() {
     if (!relatorioCliente) { refetchCliente(); toast.error('Aguarde o carregamento dos dados.'); return }
     exportPdf({
-      title: nomeEmpresa || 'Catalogo de Produtos',
+      title: nomeEmpresa || 'Catálogo de Produtos',
       subtitle: `Lista de Produtos - ${today()}`,
       landscape: false,
       columns: [
@@ -440,13 +440,13 @@ export default function ReportsPage() {
     if (!relatorioMov) { refetchMov(); toast.error('Aguarde o carregamento dos dados.'); return }
     const { movimentacoes: movs, totais: t } = relatorioMov
     exportPdf({
-      title: 'Relatorio Detalhado de Movimentacoes',
-      subtitle: getMovFilterText() || 'Todas as movimentacoes',
+      title: 'Relatório Detalhado de Movimentações',
+      subtitle: getMovFilterText() || 'Todas as movimentações',
       landscape: true,
       summaryCards: [
         { label: 'Total', value: String(t.total) },
         { label: 'Entradas', value: `${t.total_entradas} (${fmtQty(t.qtd_entradas)} un.)` },
-        { label: 'Saidas', value: `${t.total_saidas} (${fmtQty(t.qtd_saidas)} un.)` },
+        { label: 'Saídas', value: `${t.total_saidas} (${fmtQty(t.qtd_saidas)} un.)` },
       ],
       columns: [
         { header: '#', dataKey: 'seq', align: 'center' },
@@ -467,7 +467,7 @@ export default function ReportsPage() {
       totalsRow: {
         seq: '', data_fmt: '', sku: '', produto: 'TOTAL', operacao_fmt: '',
         quantidade_fmt: fmtQty(t.qtd_entradas + t.qtd_saidas),
-        motivo: `Entradas: ${fmtQty(t.qtd_entradas)} | Saidas: ${fmtQty(t.qtd_saidas)}`,
+        motivo: `Entradas: ${fmtQty(t.qtd_entradas)} | Saídas: ${fmtQty(t.qtd_saidas)}`,
       },
     })
   }
@@ -512,7 +512,7 @@ export default function ReportsPage() {
     if (!relatorioCliente) { refetchCliente(); toast.error('Aguarde o carregamento dos dados.'); return }
     exportExcel({
       filename: 'Catalogo_Produtos',
-      sheetName: 'Catalogo',
+      sheetName: 'Catálogo',
       columns: [
         { header: 'Codigo', key: 'sku', width: 14 },
         { header: 'Produto', key: 'nome', width: 30 },
@@ -544,7 +544,7 @@ export default function ReportsPage() {
       ],
       rows: movs.map((m, i) => ({
         seq: i + 1, data_fmt: fmtDateTime(m.data), sku: m.sku, produto: m.produto,
-        operacao_fmt: m.operacao === '+' ? 'Entrada' : 'Saida',
+        operacao_fmt: m.operacao === '+' ? 'Entrada' : 'Saída',
         quantidade: m.quantidade, motivo: m.justificativa || m.tipo_descricao,
       })),
       totalsRow: {
@@ -669,8 +669,8 @@ export default function ReportsPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <SelectModal label="Filtrar por Categoria" placeholder="Todas as categorias" emptyLabel="Todas" value={categoriaId} options={catOptions} onChange={setCategoriaId} />
               <div>
-                <label className="label">Nome / Titulo do Catalogo</label>
-                <input className="input-field" placeholder="Ex: Minha Empresa - Catalogo" value={nomeEmpresa} onChange={e => setNomeEmpresa(e.target.value)} />
+                <label className="label">Nome / Título do Catálogo</label>
+                <input className="input-field" placeholder="Ex: Minha Empresa - Catálogo" value={nomeEmpresa} onChange={e => setNomeEmpresa(e.target.value)} />
               </div>
             </div>
           </CollapsibleFilter>
@@ -679,7 +679,7 @@ export default function ReportsPage() {
             {loadingCliente ? (
               <div className="py-16 text-center text-sm text-gray-400">Carregando...</div>
             ) : !relatorioCliente || relatorioCliente.produtos.length === 0 ? (
-              <div className="py-16 text-center text-sm text-gray-400">Nenhum produto com preco de venda encontrado.</div>
+              <div className="py-16 text-center text-sm text-gray-400">Nenhum produto com preço de venda encontrado.</div>
             ) : (
               <div className="overflow-x-auto"><table className="w-full text-sm">
                 <thead className="border-b border-gray-200 dark:border-slate-700">
@@ -737,7 +737,7 @@ export default function ReportsPage() {
               <SelectModal label="Produto" placeholder="Todos os produtos" emptyLabel="Todos" value={movProdutoId} options={prodOptions} onChange={setMovProdutoId} />
               <SelectModal label="Tipo" placeholder="Todos os tipos" emptyLabel="Todos" value={movTipoId} options={tipoOptions} onChange={setMovTipoId} />
               <div>
-                <label className="label">Operacao</label>
+                <label className="label">Operação</label>
                 <div className="flex gap-2">
                   <button
                     type="button"
@@ -795,7 +795,7 @@ export default function ReportsPage() {
             {loadingMov ? (
               <div className="py-16 text-center text-sm text-gray-400">Carregando...</div>
             ) : !relatorioMov || relatorioMov.movimentacoes.length === 0 ? (
-              <div className="py-16 text-center text-sm text-gray-400">Nenhuma movimentacao encontrada.</div>
+              <div className="py-16 text-center text-sm text-gray-400">Nenhuma movimentação encontrada.</div>
             ) : (
               <div className="overflow-x-auto"><table className="w-full text-sm">
                 <thead className="border-b border-gray-200 dark:border-slate-700">
@@ -803,7 +803,7 @@ export default function ReportsPage() {
                     <th className="px-4 py-3">Data</th>
                     <th className="px-4 py-3">Produto</th>
                     <th className="px-4 py-3 hidden sm:table-cell">Tipo</th>
-                    <th className="px-4 py-3">Operacao</th>
+                    <th className="px-4 py-3">Operação</th>
                     <th className="px-4 py-3 text-right">Qtd</th>
                     <th className="px-4 py-3 hidden md:table-cell">Justificativa</th>
                     <th className="px-4 py-3 hidden lg:table-cell">Observacao</th>
@@ -835,7 +835,7 @@ export default function ReportsPage() {
 
           {relatorioMov && relatorioMov.movimentacoes.length > 0 && (
             <div className="text-sm text-gray-500 dark:text-slate-400">
-              {relatorioMov.movimentacoes.length} movimentacao{relatorioMov.movimentacoes.length !== 1 ? 'es' : ''}
+              {relatorioMov.movimentacoes.length} movimentaç{relatorioMov.movimentacoes.length !== 1 ? 'ões' : 'ão'}
             </div>
           )}
 
