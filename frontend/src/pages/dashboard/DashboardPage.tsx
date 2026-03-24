@@ -80,9 +80,9 @@ function DonutChart({ data }: { data: StockByCategory[] }) {
             borderRadius: '6px',
             fontSize: '12px',
           }}
-          formatter={(value: number, name: string) => [
-            `${value.toLocaleString('pt-BR')} un. (${total > 0 ? ((value / total) * 100).toFixed(1) : 0}%)`,
-            name,
+          formatter={(value, name) => [
+            `${(Number(value) || 0).toLocaleString('pt-BR')} un. (${total > 0 ? (((Number(value) || 0) / total) * 100).toFixed(1) : 0}%)`,
+            String(name),
           ]}
         />
         <Legend
@@ -137,9 +137,9 @@ function TrendChart({ data }: { data: MovementTrend[] }) {
             borderRadius: '6px',
             fontSize: '12px',
           }}
-          formatter={(value: number, name: string) => [
-            value.toLocaleString('pt-BR'),
-            name === 'entradas' ? 'Entradas' : 'Saidas',
+          formatter={(value, name) => [
+            (Number(value) || 0).toLocaleString('pt-BR'),
+            name === 'entradas' ? 'Entradas' : 'Saídas',
           ]}
           labelFormatter={(label) => `Mes: ${label}`}
         />

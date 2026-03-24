@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 import { getToken, setToken, removeToken } from '../lib/auth'
 
-const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3001'
+const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3001/api/v1'
 
 interface User {
   id: string
@@ -29,7 +29,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const token = getToken()
       if (token) {
         try {
-          const res = await fetch(`${API_URL}/api/v1/auth/me`, {
+          const res = await fetch(`${API_URL}/auth/me`, {
             headers: { Authorization: `Bearer ${token}` },
           })
           setUser(res.ok ? await res.json() : null)
@@ -43,7 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   async function signIn(login: string, senha: string) {
-    const res = await fetch(`${API_URL}/api/v1/auth/login`, {
+    const res = await fetch(`${API_URL}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ login, senha }),
