@@ -482,7 +482,7 @@ export default function ReportsPage() {
       title: 'Relatório Interno de Estoque',
       subtitle: `${prods.length} produtos | Gerado em ${today()}`,
       summaryCards: [
-        { label: 'Total de Itens', value: fmtQty(t.total_itens) },
+        { label: 'Total de Itens', value: fmtQty(t.total_produtos) },
         { label: 'Total de Peças', value: fmtQty(t.total_pecas) },
         { label: 'Valor em Custo', value: fmtCurrency(t.total_custo) },
         { label: 'Valor em Venda', value: fmtCurrency(t.total_venda) },

@@ -1,6 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import helmet from 'helmet'
+import path from 'path'
 import { errorHandler } from './middleware/errorHandler'
 
 import authRoutes from './routes/auth'
@@ -14,7 +15,9 @@ import reportsRoutes from './routes/reports'
 
 const app = express()
 
-app.use(helmet())
+app.use(helmet({
+  contentSecurityPolicy: false,
+}))
 app.use(express.json())
 
 app.use(cors({
@@ -33,6 +36,13 @@ app.use('/api/v1/reports', reportsRoutes)
 
 app.get('/api/v1/health', async (_req, res) => {
   res.json({ status: 'ok' })
+})
+
+// Serve frontend estático (build do Vite)
+const frontendPath = path.join(__dirname, '../../frontend/dist')
+app.use(express.static(frontendPath))
+app.get('*', (_req, res) => {
+  res.sendFile(path.join(frontendPath, 'index.html'))
 })
 
 app.use(errorHandler)
